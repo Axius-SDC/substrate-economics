@@ -1,0 +1,391 @@
+{
+  "manifest": {
+    "generated_utc": "2026-05-27T23:39:17.604999+00:00",
+    "iterations_per_class": 1000,
+    "python": "3.13.5",
+    "platform": "Linux-6.17.0-29-generic-x86_64-with-glibc2.39",
+    "processor": "x86_64",
+    "versions": {
+      "sdcvalidator": "4.0.1",
+      "sdcgovernance": "4.0.4",
+      "pyshacl": "0.30.0",
+      "rdflib": "7.1.4"
+    },
+    "cost_bases": {
+      "cloud_vcpu_hr": 0.048,
+      "onprem_vcpu_hr": 0.014
+    }
+  },
+  "models": {
+    "Employment-Record": {
+      "compile_ms_one_time": 198.978,
+      "sizes": {
+        "small": {
+          "BIS": {
+            "mean_ms": 14.17684,
+            "median_ms": 13.41943,
+            "p95_ms": 16.18779,
+            "p99_ms": 32.28693,
+            "stdev_ms": 2.64325
+          },
+          "CSAS": {
+            "mean_ms": 0.94435,
+            "median_ms": 0.89355,
+            "p95_ms": 1.06204,
+            "p99_ms": 1.20317,
+            "stdev_ms": 0.50172
+          },
+          "ACPS": {
+            "mean_ms": 0.77004,
+            "median_ms": 0.74491,
+            "p95_ms": 0.88856,
+            "p99_ms": 0.96078,
+            "stdev_ms": 0.06033
+          },
+          "full_stack_mean_ms": 15.89123,
+          "distinct_verdicts_over_50_runs": 1,
+          "zero_variance": true,
+          "instance_bytes": 511,
+          "cost": {
+            "cpu_seconds_per_decision": 0.01589123,
+            "usd_per_decision_cloud": 2.1188306666666664e-07,
+            "usd_per_decision_onprem": 6.179922777777777e-08,
+            "variance_multiplier": 1.0,
+            "scale_points": {
+              "Pilot": {
+                "decisions_per_day": 2400,
+                "annual_usd_cloud": 0.19,
+                "annual_usd_onprem": 0.05
+              },
+              "Department": {
+                "decisions_per_day": 10000,
+                "annual_usd_cloud": 0.77,
+                "annual_usd_onprem": 0.23
+              },
+              "Hospital": {
+                "decisions_per_day": 100000,
+                "annual_usd_cloud": 7.73,
+                "annual_usd_onprem": 2.26
+              },
+              "Health System": {
+                "decisions_per_day": 1000000,
+                "annual_usd_cloud": 77.34,
+                "annual_usd_onprem": 22.56
+              },
+              "Sovereign Large": {
+                "decisions_per_day": 10000000,
+                "annual_usd_cloud": 773.37,
+                "annual_usd_onprem": 225.57
+              }
+            }
+          }
+        },
+        "medium": {
+          "BIS": {
+            "mean_ms": 16.26464,
+            "median_ms": 15.42975,
+            "p95_ms": 17.77914,
+            "p99_ms": 36.86589,
+            "stdev_ms": 3.20861
+          },
+          "CSAS": {
+            "mean_ms": 4.65459,
+            "median_ms": 4.53469,
+            "p95_ms": 5.11344,
+            "p99_ms": 5.56242,
+            "stdev_ms": 0.56053
+          },
+          "ACPS": {
+            "mean_ms": 2.70044,
+            "median_ms": 2.62041,
+            "p95_ms": 3.0327,
+            "p99_ms": 3.21021,
+            "stdev_ms": 0.50316
+          },
+          "full_stack_mean_ms": 23.61967,
+          "distinct_verdicts_over_50_runs": 1,
+          "zero_variance": true,
+          "instance_bytes": 8638,
+          "cost": {
+            "cpu_seconds_per_decision": 0.02361967,
+            "usd_per_decision_cloud": 3.149289333333333e-07,
+            "usd_per_decision_onprem": 9.185427222222221e-08,
+            "variance_multiplier": 1.0,
+            "scale_points": {
+              "Pilot": {
+                "decisions_per_day": 2400,
+                "annual_usd_cloud": 0.28,
+                "annual_usd_onprem": 0.08
+              },
+              "Department": {
+                "decisions_per_day": 10000,
+                "annual_usd_cloud": 1.15,
+                "annual_usd_onprem": 0.34
+              },
+              "Hospital": {
+                "decisions_per_day": 100000,
+                "annual_usd_cloud": 11.49,
+                "annual_usd_onprem": 3.35
+              },
+              "Health System": {
+                "decisions_per_day": 1000000,
+                "annual_usd_cloud": 114.95,
+                "annual_usd_onprem": 33.53
+              },
+              "Sovereign Large": {
+                "decisions_per_day": 10000000,
+                "annual_usd_cloud": 1149.49,
+                "annual_usd_onprem": 335.27
+              }
+            }
+          }
+        },
+        "large": {
+          "BIS": {
+            "mean_ms": 17.94558,
+            "median_ms": 17.22813,
+            "p95_ms": 19.48329,
+            "p99_ms": 33.17926,
+            "stdev_ms": 2.64106
+          },
+          "CSAS": {
+            "mean_ms": 8.25128,
+            "median_ms": 8.00749,
+            "p95_ms": 8.82208,
+            "p99_ms": 17.9766,
+            "stdev_ms": 1.19308
+          },
+          "ACPS": {
+            "mean_ms": 4.49315,
+            "median_ms": 4.35633,
+            "p95_ms": 4.8726,
+            "p99_ms": 5.16046,
+            "stdev_ms": 0.87715
+          },
+          "full_stack_mean_ms": 30.69001,
+          "distinct_verdicts_over_50_runs": 1,
+          "zero_variance": true,
+          "instance_bytes": 16414,
+          "cost": {
+            "cpu_seconds_per_decision": 0.03069001,
+            "usd_per_decision_cloud": 4.0920013333333334e-07,
+            "usd_per_decision_onprem": 1.193500388888889e-07,
+            "variance_multiplier": 1.0,
+            "scale_points": {
+              "Pilot": {
+                "decisions_per_day": 2400,
+                "annual_usd_cloud": 0.36,
+                "annual_usd_onprem": 0.1
+              },
+              "Department": {
+                "decisions_per_day": 10000,
+                "annual_usd_cloud": 1.49,
+                "annual_usd_onprem": 0.44
+              },
+              "Hospital": {
+                "decisions_per_day": 100000,
+                "annual_usd_cloud": 14.94,
+                "annual_usd_onprem": 4.36
+              },
+              "Health System": {
+                "decisions_per_day": 1000000,
+                "annual_usd_cloud": 149.36,
+                "annual_usd_onprem": 43.56
+              },
+              "Sovereign Large": {
+                "decisions_per_day": 10000000,
+                "annual_usd_cloud": 1493.58,
+                "annual_usd_onprem": 435.63
+              }
+            }
+          }
+        }
+      }
+    },
+    "Healthcare-Record": {
+      "compile_ms_one_time": 223.903,
+      "sizes": {
+        "small": {
+          "BIS": {
+            "mean_ms": 31.8551,
+            "median_ms": 30.38777,
+            "p95_ms": 34.93138,
+            "p99_ms": 67.11021,
+            "stdev_ms": 6.70295
+          },
+          "CSAS": {
+            "mean_ms": 1.54845,
+            "median_ms": 1.46796,
+            "p95_ms": 1.7266,
+            "p99_ms": 1.86789,
+            "stdev_ms": 0.95215
+          },
+          "ACPS": {
+            "mean_ms": 1.35866,
+            "median_ms": 1.32285,
+            "p95_ms": 1.54377,
+            "p99_ms": 1.61032,
+            "stdev_ms": 0.08546
+          },
+          "full_stack_mean_ms": 34.76221,
+          "distinct_verdicts_over_50_runs": 1,
+          "zero_variance": true,
+          "instance_bytes": 508,
+          "cost": {
+            "cpu_seconds_per_decision": 0.03476221,
+            "usd_per_decision_cloud": 4.6349613333333334e-07,
+            "usd_per_decision_onprem": 1.3518637222222222e-07,
+            "variance_multiplier": 1.0,
+            "scale_points": {
+              "Pilot": {
+                "decisions_per_day": 2400,
+                "annual_usd_cloud": 0.41,
+                "annual_usd_onprem": 0.12
+              },
+              "Department": {
+                "decisions_per_day": 10000,
+                "annual_usd_cloud": 1.69,
+                "annual_usd_onprem": 0.49
+              },
+              "Hospital": {
+                "decisions_per_day": 100000,
+                "annual_usd_cloud": 16.92,
+                "annual_usd_onprem": 4.93
+              },
+              "Health System": {
+                "decisions_per_day": 1000000,
+                "annual_usd_cloud": 169.18,
+                "annual_usd_onprem": 49.34
+              },
+              "Sovereign Large": {
+                "decisions_per_day": 10000000,
+                "annual_usd_cloud": 1691.76,
+                "annual_usd_onprem": 493.43
+              }
+            }
+          }
+        },
+        "medium": {
+          "BIS": {
+            "mean_ms": 33.73703,
+            "median_ms": 32.42875,
+            "p95_ms": 38.34358,
+            "p99_ms": 65.98114,
+            "stdev_ms": 6.98596
+          },
+          "CSAS": {
+            "mean_ms": 5.24061,
+            "median_ms": 5.16756,
+            "p95_ms": 5.41858,
+            "p99_ms": 5.97784,
+            "stdev_ms": 0.79904
+          },
+          "ACPS": {
+            "mean_ms": 3.24691,
+            "median_ms": 3.21731,
+            "p95_ms": 3.36724,
+            "p99_ms": 3.67006,
+            "stdev_ms": 0.41453
+          },
+          "full_stack_mean_ms": 42.22455,
+          "distinct_verdicts_over_50_runs": 1,
+          "zero_variance": true,
+          "instance_bytes": 8635,
+          "cost": {
+            "cpu_seconds_per_decision": 0.04222455,
+            "usd_per_decision_cloud": 5.62994e-07,
+            "usd_per_decision_onprem": 1.6420658333333333e-07,
+            "variance_multiplier": 1.0,
+            "scale_points": {
+              "Pilot": {
+                "decisions_per_day": 2400,
+                "annual_usd_cloud": 0.49,
+                "annual_usd_onprem": 0.14
+              },
+              "Department": {
+                "decisions_per_day": 10000,
+                "annual_usd_cloud": 2.05,
+                "annual_usd_onprem": 0.6
+              },
+              "Hospital": {
+                "decisions_per_day": 100000,
+                "annual_usd_cloud": 20.55,
+                "annual_usd_onprem": 5.99
+              },
+              "Health System": {
+                "decisions_per_day": 1000000,
+                "annual_usd_cloud": 205.49,
+                "annual_usd_onprem": 59.94
+              },
+              "Sovereign Large": {
+                "decisions_per_day": 10000000,
+                "annual_usd_cloud": 2054.93,
+                "annual_usd_onprem": 599.35
+              }
+            }
+          }
+        },
+        "large": {
+          "BIS": {
+            "mean_ms": 34.93875,
+            "median_ms": 33.50701,
+            "p95_ms": 59.56506,
+            "p99_ms": 65.68822,
+            "stdev_ms": 6.79034
+          },
+          "CSAS": {
+            "mean_ms": 8.79136,
+            "median_ms": 8.6002,
+            "p95_ms": 9.26601,
+            "p99_ms": 10.57707,
+            "stdev_ms": 1.10983
+          },
+          "ACPS": {
+            "mean_ms": 5.07095,
+            "median_ms": 4.96029,
+            "p95_ms": 5.39154,
+            "p99_ms": 5.77495,
+            "stdev_ms": 0.82425
+          },
+          "full_stack_mean_ms": 48.80106,
+          "distinct_verdicts_over_50_runs": 1,
+          "zero_variance": true,
+          "instance_bytes": 16411,
+          "cost": {
+            "cpu_seconds_per_decision": 0.04880106,
+            "usd_per_decision_cloud": 6.506808e-07,
+            "usd_per_decision_onprem": 1.897819e-07,
+            "variance_multiplier": 1.0,
+            "scale_points": {
+              "Pilot": {
+                "decisions_per_day": 2400,
+                "annual_usd_cloud": 0.57,
+                "annual_usd_onprem": 0.17
+              },
+              "Department": {
+                "decisions_per_day": 10000,
+                "annual_usd_cloud": 2.37,
+                "annual_usd_onprem": 0.69
+              },
+              "Hospital": {
+                "decisions_per_day": 100000,
+                "annual_usd_cloud": 23.75,
+                "annual_usd_onprem": 6.93
+              },
+              "Health System": {
+                "decisions_per_day": 1000000,
+                "annual_usd_cloud": 237.5,
+                "annual_usd_onprem": 69.27
+              },
+              "Sovereign Large": {
+                "decisions_per_day": 10000000,
+                "annual_usd_cloud": 2374.98,
+                "annual_usd_onprem": 692.7
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
