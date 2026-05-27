@@ -25,21 +25,17 @@ All deterministic, all CPU-bound:
 
 Pin and record exact versions of every component in the environment manifest (Section 7). Reproducibility is the credibility mechanism; an unpinned benchmark is not checkable evidence.
 
-## 3. Decision classes (align labels with the measurement side before the joined table)
+## 3. Decision classes (locked from Paper 50: BIS, CSAS, ACPS)
 
-Benchmark the SDC component(s) that render each decision. Left column is the decision class; right is the SDC execution path to instrument.
+The measurement side's per-decision runtime classes are exactly three. The SDC side measures the deterministic equivalent of each. **Full-stack = all three (BIS + CSAS + ACPS); that is the comparable unit**, matching Paper 50's 4,750-token full-stack decision at $0.43–$9.80.
 
-| Decision class | SDC runtime path to instrument |
-|---|---|
-| **Schema validation** — does the payload conform to the declared schema + constraints? | `sdcvalidator` structural validation |
-| **Authority verification** — is this principal authorized for this action under current policy? | `sdcgovernance` XACML evaluation |
-| **Constraint persistence verification** — does the output still hold the constraint declared at input? | SHACL/OWL reasoning + `sdcvalidator` |
-| **Provenance verification** — can lineage be traced to authorized inputs with intact substrate state? | Receipt corpus traversal + hash-chain verify |
-| **Cross-system handoff admissibility** — does the constraint hold across the boundary? | validation + XACML + receipt (end-to-end) |
-| **Jurisdiction resolution** — which constraint set governs when two overlap? | SHACL / constraint-set resolution |
-| **Receipt write** (per-decision overhead) | hash-chain append + signed-receipt serialization |
+| MTCP class | What it evaluates | SDC-side equivalent (CPU-bound) |
+|---|---|---|
+| **BIS** | constraint persistence across a multi-turn interaction (single system) | `sdcvalidator` structural validation + SHACL/OWL constraint reasoning + receipt write |
+| **CSAS** | constraint persistence at the coordination boundary between two systems | `sdcvalidator` + `sdcgovernance` XACML (cross-domain authorization) + receipt, across two registries |
+| **ACPS** | constraint persistence under adversarial pressure | the same validation pipeline against an adversarially-perturbed payload; the deterministic verdict is invariant, so the cost is the validation cost |
 
-The measurement side reports per-decision cost for a set of runtime decision classes; confirm the exact semantics of each with the MTCP side and map each to an SDC path above, so the benchmark measures the SDC components that render the *same* decision. Where SDC and an LLM evaluation do not do identical work for a class, document the difference rather than claiming equivalence. The comparison is "the governance decision both architectures are asked to render," scoped to classes where both plausibly apply.
+Out of scope, exactly as Paper 50 scopes them: the constitutional-layer frameworks (COS, LRP, GRC) are design-time; DRA and TDS are periodic; BEC hash-chain is negligible; the Admissibility Gate is a threshold lookup. Do not measure SDC operations with no per-decision MTCP counterpart for the headline comparison. Concrete CordovaOS scenarios for each class are in `PRD-benchmark-dataset.md` §2.
 
 ## 4. Scale points
 
@@ -129,8 +125,8 @@ The most defensible finding and the **regulatory** argument, so it gets its own 
 ---
 
 ### Run order
-1. Confirm the decision-class label mapping with the MTCP side.
+1. Build the fixtures per `PRD-benchmark-dataset.md` (compose ProvGov into copied CordovaOS models, mint composed-model CUIDs only, generate new XML templates, reuse the synthetic data).
 2. Build the harness; pin versions; write the manifest.
-3. Run on the FOSS profile, all classes, N ≥ 1,000, across payload/policy sizes; capture all metrics including verdict hashes.
+3. Run all three classes (BIS, CSAS, ACPS) on the FOSS profile, N ≥ 1,000, across payload/policy sizes; capture all metrics including verdict hashes.
 4. Compute $/decision (both cost bases) and the variance result.
-5. Review the order-of-magnitude before drafting conclusions; then write the substrate-side results into the manuscript and join with the inference-side numbers.
+5. Review the order-of-magnitude before drafting conclusions; then write the substrate-side results into Paper 50 §5 and the manuscript, joined with the inference-side numbers.

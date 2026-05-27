@@ -1,72 +1,60 @@
 # PRD — Benchmark Dataset & Fixtures
 
-**For discussion.** Decides what data models, governance components, payloads, and policies the CPU benchmark runs against, and how much infrastructure to stand up. Pairs with `METHODOLOGY.md`.
+**Committed specification.** One version, built in a single pass and shipped. Pairs with `METHODOLOGY.md` and produces the data that fills the SDC placeholder in Ahmad's Paper 50, §5.
 
-**Status:** proposal, 2026-05-27. Recommendation is marked; open questions at the end.
+**Status:** locked, 2026-05-27.
 
 ---
 
-## 1. What the fixtures must enable
+## 1. Goal
 
-The benchmark's comparable unit is **process CPU time per runtime governance decision**, measured so it sits directly beside the MTCP inference side's **tokens per decision**. The fixtures therefore must:
+Produce the SDC-side per-decision CPU cost and the zero-variance demonstration that fill the placeholder in *Substrate Economics* (Paper 50) §5, at the **same five scale points**, for the **same per-decision classes**, computed the **same way** as the inference side, so the comparison is apples-to-apples. We build all fixtures, run all classes, compute the numbers, and ship in one pass. No phases, no v2.
 
-- Exercise the real runtime components — `sdcvalidator`, `sdcgovernance` (XACML + Receipt corpus), SHACL/OWL reasoning — against realistic SDC4 models, not toy schemas.
-- Cover every decision class in `METHODOLOGY.md` §3 with a concrete scenario.
-- Be **isolatable**: the measurement must capture the governance computation, not app-server, DB-I/O, or network overhead, or the per-decision number is not comparable to a clean inference number.
-- Be **reproducible and publishable**: committed to the repo so the result is independently checkable.
+## 2. Classes to parallel (locked from Paper 50)
 
-## 2. Source material (available today)
+Paper 50 scopes per-decision runtime inference to exactly three MTCP classes. The SDC side measures the deterministic equivalent of each. **Full-stack = all three (BIS + CSAS + ACPS); that is the comparable unit**, matching Paper 50's 4,750-token full-stack decision at $0.43–$9.80.
 
-**CordovaOS — ten cross-domain government registries** (`~/GitHub/CordovaOS/models/`): Business-Registry, Civil-Registry, Education-Record, Employment-Record, Healthcare-Record, Law-Enforcement-Record, Maritime-Port-Authority, Property-Registry, Tax-and-Revenue-Record, Vital-Statistics-Record. All generated from one SDCRM, so they interoperate by construction. This is ideal: regulated + sovereign + cross-boundary, the paper's exact audience, and the decision classes have natural scenarios across these domains.
+| MTCP class | What it evaluates | SDC-side equivalent (CPU-bound) | CordovaOS scenario |
+|---|---|---|---|
+| **BIS** | constraint persistence across a multi-turn interaction (single system) | `sdcvalidator` structural validation + SHACL/OWL constraint reasoning + receipt write | re-validate a Healthcare-Record instance still holds its declared constraints |
+| **CSAS** | constraint persistence at the coordination boundary between two systems | `sdcvalidator` + `sdcgovernance` XACML (cross-domain authorization) + receipt, across two registries | a record crossing Healthcare-Record → Tax-and-Revenue-Record |
+| **ACPS** | constraint persistence under adversarial pressure | the same validation pipeline run against an adversarially-perturbed payload; the deterministic verdict is invariant | the same constraint check on an adversarially-framed payload; verdict unchanged, cost is the validation cost |
 
-**ProvGov governance families** — the @ProvGov component families (sourced from CordovaOS templates; see `CordovaOS/docs/design/Governance_Rebuild_Plan.md`). Composing these into a data model is what makes it exercise the full runtime governance stack (XACML authority, provenance, receipts) rather than structural validation alone. Authoritative current definitions are in the SDCStudio Cloud SQL backup `sdcstudio_cloudsql_20260527_171128.sql.gz` (77 MB).
+ACPS is where the architecture shows: the inference side pays 2,200 tokens plus variance per adversarial evaluation; the deterministic side pays the validation cost and returns the same verdict regardless of framing.
 
-**Payload generation** — `CordovaOS/datagen/` for representative instances at varying sizes.
+**Out of scope (exactly as Paper 50 scopes them):** the constitutional-layer frameworks (COS, LRP, GRC) are design-time; DRA and TDS are periodic; BEC hash-chain is negligible; the Admissibility Gate is a threshold lookup. Do not measure SDC operations that have no per-decision MTCP counterpart (schema-only, authority-only, provenance-only, jurisdiction-only) for the headline comparison; the comparable unit is the BIS + CSAS + ACPS full stack.
 
-## 3. The decision (the fork to settle)
+## 3. Scale points (locked from Paper 50)
 
-**Option A — Copy the models, compose ProvGov, mint new CUIDs for the composed models only (RECOMMENDED).**
-Take a copy of the CordovaOS models and compose the @ProvGov families into them. **Mint new CUIDs only for the composed data-model schemas** — each composed model is a genuinely new artifact, because adding the ProvGov components changes the schema from the original. **Reuse every constituent component CUID unchanged** (both the CordovaOS components and the ProvGov components): they already have valid CUIDs, and reuse-by-reference preserves their identity as long as we do not edit them in situ. Exercise `sdcvalidator` + `sdcgovernance` + the runtime reasoner (Jena/Fuseki) directly via the harness against generated payloads and policy sets. No full Django app, no full DB restore — extract only the ProvGov family definitions from the backup.
-- **Pro:** isolates per-decision CPU (the comparable number); reproducible; publishable; fits the 2-day window; reusing the real component CUIDs keeps the fixtures faithful (real components, real identities), while the newly minted model CUIDs do not collide with the live published namespace.
-- **Con:** not a full in-situ system; does not capture real-deployment DB/app overhead (which is a feature here, not a bug, for the primary measurement).
+Per-decision → daily → annual at each, same rollup as the inference side:
 
-**Option B — Stand up complete CordovaOS + restore ProvGov from the backup.**
-Restore the 77 MB cloudsql dump, bring up the full Django project + ten apps + triplestore + DB, benchmark against the running system.
-- **Pro:** maximum end-to-end realism; captures cross-app interoperation and real I/O.
-- **Con:** app-server + DB-I/O + network overhead contaminate the clean CPU-per-decision figure and make it harder to defend and less comparable to a per-decision inference number; slower to stand up and control; more variables to hold constant; does not fit the 2-day window.
-
-**Recommendation: Option A as the primary fixture and measurement. Option B as an optional v2 in-situ cross-check** (real-deployment throughput on the FOSS profile), reported separately if time allows, never as the primary comparison number. Versioned DOIs make adding the v2 cross-check later clean.
-
-## 4. Fixture specification (Option A)
-
-- **Models:** the ten CordovaOS registries, copied, with @ProvGov families composed in. New CUIDs are minted for the composed model schemas only (they differ from the originals because of the ProvGov composition); all constituent component CUIDs — CordovaOS and ProvGov alike — are reused unchanged (do not edit components in situ). Tag the fixture set with a version.
-- **Payloads:** generated via `datagen` at three representative sizes (small / medium / large) per model, plus a few cross-domain instances (a subject appearing in Civil + Healthcare + Tax) for the handoff and jurisdiction classes.
-- **Policy sets:** representative XACML policy sets at a small and a larger complexity, so cost-vs-policy-complexity is a measured curve, not a point.
-- **Provenance chains:** receipts at several chain depths, so provenance-verification cost as a function of depth is captured.
-
-**Decision-class → fixture scenario:**
-| Decision class | Concrete scenario in this dataset |
+| Scale point | Decisions/day |
 |---|---|
-| Schema validation | validate a Healthcare-Record instance against its model |
-| Authority verification | XACML: can principal X read a restricted Tax-and-Revenue field |
-| Constraint persistence | a derived Vital-Statistics value still holds its declared constraint |
-| Provenance verification | trace a Civil-Registry record's lineage through the Receipt corpus |
-| Cross-system handoff admissibility | a record crossing Healthcare → Tax → Law-Enforcement |
-| Jurisdiction resolution | overlapping constraint sets when Maritime-Port-Authority and Business-Registry both govern an entity |
+| Pilot | 2,400 |
+| Department | 10,000 |
+| Hospital | 100,000 |
+| Health System | 1,000,000 |
+| Sovereign Large | 10,000,000 |
 
-## 5. Harness & infrastructure (Option A)
+## 4. Fixtures (single committed build)
 
-Needed: `sdcvalidator`, `sdcgovernance`, a runtime reasoner (Apache Jena / Fuseki for the FOSS profile), and receipt storage. **Not** needed for the primary measurement: the full Django app layer, a full cloudsql restore. Pin every version in the manifest (`METHODOLOGY.md` §7).
+- **Models.** Copy the ten CordovaOS registries (Business, Civil, Education, Employment, Healthcare, Law-Enforcement, Maritime-Port-Authority, Property, Tax-and-Revenue, Vital-Statistics) and compose the @ProvGov families into them. **Mint new CUIDs for the composed model schemas only** — each is a new artifact because the ProvGov composition changes the schema. **Reuse every constituent component CUID unchanged** (CordovaOS and ProvGov alike); reuse-by-reference preserves identity, so do not edit components in situ.
+- **Track the modifications.** Record which ProvGov families are composed into which model. The composed schemas differ from the originals, and that delta is what drives the new templates below, so it must be documented.
+- **XML templates.** Because the composed models are new schemas with new CUIDs, generate **new SDC4 XML template/instance files pointing to the new composed-model CUIDs**. The existing CordovaOS templates point to the pre-ProvGov models and cannot be reused as-is.
+- **Data.** Reuse the existing CordovaOS instance data directly. It is **all synthetic (no PII)**, so it ships as-is into the new templates. No fresh data generation required.
+- **Policy sets.** Representative XACML policy sets for the CSAS cross-domain authorization decisions, at a small and a larger complexity, so cost-vs-policy-complexity is a measured curve.
+- **Provenance chains.** Receipts at representative chain depth so receipt write/verify cost is captured.
 
-## 6. Reproducibility & IP
+## 5. Harness & infrastructure
 
-- Commit the fixture set (models + composed ProvGov + payloads + policy sets) and the harness so the result is checkable. Fixtures and generated artifacts are Apache-2.0 (CordovaOS is already public). 
-- **Confirm before publishing:** only the generated model/component definitions, payloads, and policies go in. None of the SDCStudio publisher/generator internals (proprietary) leak into the fixtures.
+Exercise `sdcvalidator` + `sdcgovernance` (XACML + Receipt corpus) + the runtime reasoner (Apache Jena / Fuseki) + receipt storage **directly** via the harness against the fixtures. No full Django app, no full DB restore. Extract the @ProvGov family definitions from the SDCStudio backup `sdcstudio_cloudsql_20260527_171128.sql.gz`. Isolate process CPU time per decision so the number is not contaminated by app-server, DB-I/O, or network overhead. Pin every version in the manifest (`METHODOLOGY.md` §7).
 
-## 7. Open questions (for the discussion)
+## 6. Cost model & output
 
-1. Confirm Option A vs B (recommendation: A primary, B optional v2).
-2. ProvGov: extract family definitions from the backup, or reconstruct from CordovaOS templates / live SDCStudio? Which is the cleaner authoritative source?
-3. Do we publish synthetic payloads only, or is any CordovaOS sample data already synthetic and safe to ship? (No real PII anywhere, obviously.)
-4. Which decision classes are in scope for the **May 29 minimum publishable set** vs deferred to v2? (Proposal: schema validation, authority verification, provenance verification, and cross-system handoff for v1; constraint-persistence and jurisdiction-resolution can follow if time is short.)
-5. Confirm the SDC-side decision classes map to the MTCP BIS / CSAS / ACPS labels (coordinate with Ahmad).
+- Per-decision SDC cost = CPU-seconds/decision × $/vCPU-second + receipt storage, on **two bases** (cloud reference rate and on-prem amortized), variance multiplier = **1.0** by construction.
+- **Fill Paper 50 §5:** the deterministic-side per-decision, daily, and annual cost at all five scale points, presented as transparent ranges with assumptions exposed, directly beside the inference-side figures.
+- **Lead result:** the zero-variance demonstration — verdict hash identical across all N runs of identical input — paired against the inference side's 1.36x average / 3–5x worst-case re-run multiplier.
+
+## 7. Reproducibility & IP
+
+Commit the fixture set (composed models + new XML templates + the reused synthetic CordovaOS data + policy sets), the harness, and the raw timing data, so the result is independently checkable. All generated artifacts are Apache-2.0; CordovaOS is already public. **Confirm before publishing** that only generated model/component/template/data/policy artifacts go in, and that no SDCStudio publisher/generator internals leak into the fixtures.
