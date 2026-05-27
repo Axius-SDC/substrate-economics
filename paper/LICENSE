@@ -1,0 +1,14 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+The manuscript and written content in this directory are licensed under the
+Creative Commons Attribution 4.0 International License.
+
+You are free to share and adapt the material for any purpose, even commercially,
+provided you give appropriate credit, link to the license, and indicate if
+changes were made.
+
+SPDX-License-Identifier: CC-BY-4.0
+License text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Note: code and the benchmark harness elsewhere in this repository are licensed
+under Apache-2.0 (see the repository-root LICENSE), not CC BY 4.0.
