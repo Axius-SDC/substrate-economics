@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- OASIS XML catalog: redirects SDC4 reference-model URIs to the collocated SDCRM. -->
+<!-- The CordovaOS model schemas are left byte-identical; only resolution is redirected. -->
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <rewriteURI uriStartString="https://semanticdatacharter.com/ns/sdc4/" rewritePrefix="sdcrm/sdc4/schemas/"/>
+  <rewriteSystem systemIdStartString="https://semanticdatacharter.com/ns/sdc4/" rewritePrefix="sdcrm/sdc4/schemas/"/>
+  <uri name="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd" uri="sdcrm/sdc4/schemas/sdc4.xsd"/>
+  <system systemId="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd" uri="sdcrm/sdc4/schemas/sdc4.xsd"/>
+</catalog>

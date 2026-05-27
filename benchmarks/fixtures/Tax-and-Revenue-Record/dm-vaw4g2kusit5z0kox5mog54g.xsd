@@ -34,7 +34,7 @@
     </xsd:appinfo>
   </xsd:annotation>
 
-<xsd:include schemaLocation="../sdc4.xsd"/>
+<xsd:include schemaLocation="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd"/>
 
 <!-- Schema for DM Tax and Revenue Record (vaw4g2kusit5z0kox5mog54g) -->
 

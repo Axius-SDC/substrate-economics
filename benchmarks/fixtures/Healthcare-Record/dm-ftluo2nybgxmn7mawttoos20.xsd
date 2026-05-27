@@ -34,7 +34,7 @@
     </xsd:appinfo>
   </xsd:annotation>
 
-<xsd:include schemaLocation="../sdc4.xsd"/>
+<xsd:include schemaLocation="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd"/>
 
 <!-- Schema for DM Healthcare Record (ftluo2nybgxmn7mawttoos20) -->
 

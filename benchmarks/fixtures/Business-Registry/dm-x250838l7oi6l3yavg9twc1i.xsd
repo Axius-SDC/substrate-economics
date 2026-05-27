@@ -34,7 +34,7 @@
     </xsd:appinfo>
   </xsd:annotation>
 
-<xsd:include schemaLocation="../sdc4.xsd"/>
+<xsd:include schemaLocation="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd"/>
 
 <!-- Schema for DM Business Registry (x250838l7oi6l3yavg9twc1i) -->
 

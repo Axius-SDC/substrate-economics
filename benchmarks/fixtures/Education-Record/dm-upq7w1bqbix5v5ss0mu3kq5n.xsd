@@ -34,7 +34,7 @@
     </xsd:appinfo>
   </xsd:annotation>
 
-<xsd:include schemaLocation="../sdc4.xsd"/>
+<xsd:include schemaLocation="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd"/>
 
 <!-- Schema for DM Education Record (upq7w1bqbix5v5ss0mu3kq5n) -->
 

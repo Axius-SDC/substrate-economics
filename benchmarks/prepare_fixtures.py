@@ -1,68 +1,85 @@
 #!/usr/bin/env python3
 """
-Vendor the CordovaOS government models into this repo as offline benchmark fixtures.
+Vendor the offline benchmark fixtures: the complete SDCRM, the ten CordovaOS models
+(byte-identical, unmodified), and an OASIS catalog that resolves the models' remote SDC4
+references to the collocated SDCRM.
 
-CordovaOS (https://github.com/Axius-SDC/CordovaOS, Apache-2.0) publishes ten cross-domain
-government registries, each as an SDC4 XSD + SHACL shapes (.ttl) + JSON-LD + an XML instance
-template. Those schemas reference the SDC4 reference model (sdc4.xsd) by REMOTE URL, which
-breaks offline reproduction. This script copies each model's artifacts into
-`benchmarks/fixtures/<Model>/`, rewrites the remote `sdc4.xsd` include to a local relative
-path, and vendors a single self-contained copy of `sdc4.xsd`.
+Why a catalog instead of editing the schemas: the CordovaOS model schemas reference the
+SDC4 reference model by remote URL. The correct, faithful way to validate them offline is to
+collocate the complete (open-source, Apache-2.0) SDCRM and provide an OASIS `catalog.xml`
+that maps the SDC4 URIs to the local copies. The model schemas stay exactly as CordovaOS
+published them; only URI resolution is redirected. See `sdc_catalog.py`.
 
-Run ONCE (by a maintainer with a CordovaOS checkout and the SDCRM sdc4.xsd) to regenerate the
-committed fixtures. Cloners do NOT need to run this — the fixtures are committed, so the
-benchmark runs offline straight from a clone.
+Run ONCE (by a maintainer with CordovaOS and SDCRM checkouts) to regenerate the committed
+fixtures. Cloners do NOT need it — everything required is committed and the benchmark runs
+offline from a clone.
+
+Layout produced:
+  benchmarks/sdcrm/sdc4/schemas/...        complete SDCRM reference model (collocated)
+  benchmarks/fixtures/<Model>/dm-*.xsd     CordovaOS models, UNMODIFIED, + .ttl/.jsonld/.xml
+  benchmarks/catalog.xml                    OASIS catalog: SDC4 URIs -> sdcrm/
 """
 import argparse
 import shutil
 from pathlib import Path
 
-REMOTE_INCLUDE = 'schemaLocation="https://semanticdatacharter.com/ns/sdc4/sdc4.xsd"'
-LOCAL_INCLUDE = 'schemaLocation="../sdc4.xsd"'
+SDC4_NS_BASE = "https://semanticdatacharter.com/ns/sdc4/"
+CATALOG_TEMPLATE = """<?xml version="1.0" encoding="UTF-8"?>
+<!-- OASIS XML catalog: redirects SDC4 reference-model URIs to the collocated SDCRM. -->
+<!-- The CordovaOS model schemas are left byte-identical; only resolution is redirected. -->
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <rewriteURI uriStartString="{base}" rewritePrefix="sdcrm/sdc4/schemas/"/>
+  <rewriteSystem systemIdStartString="{base}" rewritePrefix="sdcrm/sdc4/schemas/"/>
+  <uri name="{base}sdc4.xsd" uri="sdcrm/sdc4/schemas/sdc4.xsd"/>
+  <system systemId="{base}sdc4.xsd" uri="sdcrm/sdc4/schemas/sdc4.xsd"/>
+</catalog>
+"""
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--cordova", default="/home/twcook/GitHub/CordovaOS",
-                    help="Path to a CordovaOS checkout (source of the ten models).")
-    ap.add_argument("--sdc4", default="/media/twcook/SDCBackup/Github/SDCRM/sdc4/schemas/sdc4.xsd",
-                    help="Path to the self-contained SDC4 reference schema (SDCRM).")
-    ap.add_argument("--out", default=str(Path(__file__).parent / "fixtures"),
-                    help="Output fixtures directory inside this repo.")
+                    help="CordovaOS checkout (source of the ten models).")
+    ap.add_argument("--sdcrm-schemas", default="/media/twcook/SDCBackup/Github/SDCRM/sdc4/schemas",
+                    help="Path to the SDCRM sdc4/schemas directory (the reference model).")
+    ap.add_argument("--bench", default=str(Path(__file__).parent),
+                    help="benchmarks/ directory in this repo.")
     args = ap.parse_args()
 
-    cordova = Path(args.cordova)
-    out = Path(args.out)
-    out.mkdir(parents=True, exist_ok=True)
+    bench = Path(args.bench)
+    fixtures = bench / "fixtures"
+    sdcrm_dest = bench / "sdcrm" / "sdc4" / "schemas"
 
-    shutil.copy(args.sdc4, out / "sdc4.xsd")
-    print(f"vendored sdc4.xsd -> {out / 'sdc4.xsd'}")
+    # 1. collocate the complete SDCRM (reference schemas + OWL/TTL semantic layer)
+    if sdcrm_dest.exists():
+        shutil.rmtree(sdcrm_dest)
+    shutil.copytree(args.sdcrm_schemas, sdcrm_dest)
+    print(f"collocated SDCRM -> {sdcrm_dest} ({len(list(sdcrm_dest.iterdir()))} files)")
 
-    models_dir = cordova / "models"
+    # 2. vendor the ten CordovaOS models UNMODIFIED
+    if fixtures.exists():
+        shutil.rmtree(fixtures)
+    fixtures.mkdir(parents=True)
+    models_dir = Path(args.cordova) / "models"
     count = 0
     for d in sorted(p for p in models_dir.iterdir() if p.is_dir()):
         xsd = next(iter(d.glob("dm-*.xsd")), None)
         if xsd is None:
             continue
-        stem = xsd.stem  # dm-<cuid>
-        dest = out / d.name
-        dest.mkdir(exist_ok=True)
-
-        text = xsd.read_text(encoding="utf-8")
-        if REMOTE_INCLUDE not in text:
-            print(f"  WARN {d.name}: expected remote sdc4 include not found; leaving as-is")
-        text = text.replace(REMOTE_INCLUDE, LOCAL_INCLUDE)
-        (dest / xsd.name).write_text(text, encoding="utf-8")
-
-        for suffix in ("_shacl.ttl", ".jsonld", ".xml", ".sha1"):
+        stem = xsd.stem
+        dest = fixtures / d.name
+        dest.mkdir()
+        for suffix in (".xsd", "_shacl.ttl", ".jsonld", ".xml", ".sha1"):
             src = d / f"{stem}{suffix}"
             if src.exists():
-                shutil.copy(src, dest / src.name)
-
+                shutil.copy(src, dest / src.name)  # byte-identical copy, no rewrite
         count += 1
-        print(f"  vendored {d.name} ({stem})")
+        print(f"  vendored {d.name} ({stem}) [unmodified]")
 
-    print(f"done: {count} models -> {out}")
+    # 3. write the OASIS catalog
+    (bench / "catalog.xml").write_text(CATALOG_TEMPLATE.format(base=SDC4_NS_BASE), encoding="utf-8")
+    print(f"wrote {bench / 'catalog.xml'}")
+    print(f"done: {count} models")
 
 
 if __name__ == "__main__":
