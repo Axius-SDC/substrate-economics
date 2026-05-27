@@ -20,7 +20,7 @@ Scope discipline: this is the **runtime** governance layer only. None of the mea
 All deterministic, all CPU-bound:
 - **`sdcvalidator`** — structural validation against SDCRM-derived schemas (XSD restriction lattice).
 - **`sdcgovernance`** — XACML 3.0 PERMIT/DENY authorization + hash-chained Receipt corpus.
-- **SHACL / OWL reasoning** at runtime via Apache Jena / Fuseki (FOSS profile) or Graphwise GraphDB (Enterprise profile).
+- **SHACL / OWL reasoning** at runtime via `pyshacl` + `rdflib` (pure Python, in-process; no triplestore, no Jena/Fuseki/GraphDB).
 - **Receipt corpus** hash-chain append and verify.
 
 Pin and record exact versions of every component in the environment manifest (Section 7). Reproducibility is the credibility mechanism; an unpinned benchmark is not checkable evidence.
@@ -73,7 +73,7 @@ Statistics per class: mean, median, p95, p99, and **standard deviation** of CPU-
 
 **Environment controls:** single-tenant machine, no competing load; CPU governor set to `performance` (or document the policy); record whether turbo/boost is on; repeat the full suite to confirm stability.
 
-**Stack profiles:** run the **FOSS profile** (Jena/Fuseki + PostgreSQL) at minimum — it is the load-bearing sovereign / no-vendor-lock-in claim. Run the **Enterprise profile** (Graphwise GraphDB + SirixDB + Keycloak) if available, as a second column. Vary **payload size** and **policy/constraint-set size**; report the curve, not a single point.
+**Runtime:** pure Python (`sdcvalidator`, `sdcgovernance`, `pyshacl`, `rdflib`) — no triplestore, no GPU, no Docker; the benchmark runs in-process and offline. Vary **instance size** (small/medium/large) and, where it matters, **policy/constraint-set size**; report the curve, not a single point.
 
 ## 6. Cost model (mirror the inference side exactly)
 
@@ -98,7 +98,7 @@ Roll up identically to the inference side: `$/decision → daily (× decisions/d
 ## 7. Reproducibility manifest (publish in `/data`)
 
 - Hardware: CPU model, base/boost clock, physical/logical cores, RAM, storage type. A commodity workstation is a reasonable reference; note that a CPU benchmark needs no GPU, which is itself a point worth making.
-- OS + kernel, language version, and **pinned versions** of `sdcvalidator`, `sdcgovernance`, Jena/Fuseki or Graphwise, PostgreSQL/SirixDB, and any reasoner.
+- OS + kernel, language version, and **pinned versions** of `sdcvalidator`, `sdcgovernance`, `pyshacl`, and `rdflib` (captured automatically into `data/results.json`).
 - The **benchmark harness** (committed to `/benchmarks`), the **raw timing data** (CSV/Parquet in `/data`), and the input corpus or its generator.
 - Cost-basis sources (the cited cloud rate card; the on-prem amortization assumptions).
 
@@ -127,6 +127,6 @@ The most defensible finding and the **regulatory** argument, so it gets its own 
 ### Run order
 1. Build the fixtures per `PRD-benchmark-dataset.md` (compose ProvGov into copied CordovaOS models, mint composed-model CUIDs only, generate new XML templates, reuse the synthetic data).
 2. Build the harness; pin versions; write the manifest.
-3. Run all three classes (BIS, CSAS, ACPS) on the FOSS profile, N ≥ 1,000, across payload/policy sizes; capture all metrics including verdict hashes.
+3. Run all three classes (BIS, CSAS, ACPS) in the pure-Python runtime, N ≥ 1,000, across instance sizes; capture all metrics including verdict hashes.
 4. Compute $/decision (both cost bases) and the variance result.
 5. Review the order-of-magnitude before drafting conclusions; then write the substrate-side results into Paper 50 §5 and the manuscript, joined with the inference-side numbers.

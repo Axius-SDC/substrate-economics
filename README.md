@@ -24,7 +24,7 @@ Lead author: Timothy W. Cook (Axius SDC). Full author list, CRediT roles, and co
 
 ## Status
 
-Pre-data. The benchmark methodology is in `benchmarks/METHODOLOGY.md`; the harness and measurements follow. The measurement-side data is supplied by the MTCP side.
+The substrate-side benchmark is built and run: fixtures (ten CordovaOS models, offline via an OASIS catalog), a schema-driven valid-instance generator, and the BIS/CSAS/ACPS CPU harness. Results are in `data/` and reproduce offline from a clone (`pip install -r requirements.txt && python benchmarks/run_benchmark.py`). The measurement (inference) side is supplied by the MTCP side; see `benchmarks/README.md` for the reproduction guide and `benchmarks/METHODOLOGY.md` for the design.
 
 ## Reproducibility and citation
 
