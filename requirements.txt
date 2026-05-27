@@ -1,0 +1,8 @@
+# Substrate Economics benchmark — pure-Python runtime, no triplestore, no Docker.
+# Pinned to the versions the published numbers were produced with.
+sdcvalidator==4.0.1
+sdcgovernance==4.0.4
+pyshacl==0.30.0
+rdflib==7.1.4
+lxml==5.3.0
+cuid2
