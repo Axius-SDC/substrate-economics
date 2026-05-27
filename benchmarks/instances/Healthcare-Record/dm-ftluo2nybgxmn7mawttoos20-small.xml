@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdc4:dm-ftluo2nybgxmn7mawttoos20 xmlns:sdc4="https://semanticdatacharter.com/ns/sdc4/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dm-label>Healthcare Record</dm-label>
+    <dm-language>en-US</dm-language>
+    <dm-encoding>utf-8</dm-encoding>
+    <instance_id>aplfzu8w5mnr3tsdthenh299</instance_id>
+    <sdc4:ms-ygtbvvmzcw3ukfsg3axqry97>
+      <label>Patient Record</label>
+    </sdc4:ms-ygtbvvmzcw3ukfsg3axqry97>
+</sdc4:dm-ftluo2nybgxmn7mawttoos20>
