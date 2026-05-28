@@ -3,11 +3,12 @@
 ## The Token-Cost Asymmetry Between Deterministic and Inference-Based Governance
 
 **Timothy W. Cook**, Axius SDC, Inc.
+
 **Ahmad Abby**, MTCP Research Programme
 
-Contact: admin@mtcp.live
-DOI: 10.17605/OSF.IO/DXGK5
-May 2026
+Contact: contact@axius-sdc.com
+DOI: (on publication)
+June 2026
 
 ---
 
@@ -20,6 +21,52 @@ This note quantifies the per-decision cost gap. It uses empirical token consumpt
 A second structural difference is verdict variance. Deterministic substrate validation produces zero verdict variance by construction. It meets MDR and NMI repeatable verdict requirements automatically. Inference-based evaluation carries an average 1.36x re-run multiplier across 35 models. Worst-case multipliers reach 3 to 5x on high-variance models.
 
 The combined cost and variance argument constitutes an economic case for substrate-first governance. This case is independent of architectural and intellectual arguments.
+
+## Glossary of Abbreviations
+
+**SDC (substrate) side**
+
+- **SDC** — Semantic Data Charter: the open-standard data substrate; constraints, governance, and provenance bound to the data payload.
+- **SDCStudio** — the SDC modeling and publishing platform (referenced re: the rate-setting observation).
+- **sdcvalidator** — SDC library performing structural validation of a data instance against its model (Apache-2.0, pure Python).
+- **sdcgovernance** — SDC library performing runtime governance: XACML access decisions and a hash-chained Receipt corpus (Apache-2.0, pure Python).
+- **Receipt corpus** — sdcgovernance's hash-chained, tamper-evident record of each governance decision.
+- **CordovaOS** — the SDC reference deployment used for the benchmark: ten cross-domain government data models generated from one reference model.
+
+**MTCP (inference) side**
+
+- **MTCP** — Multi-Turn Constraint Persistence: the measurement programme whose evaluation corpus supplies the inference-side data.
+- **BIS** — the per-decision class measuring constraint persistence across a full multi-turn interaction (single system).
+- **CSAS** — Cross-System Admissibility: the per-decision class measuring constraint persistence at a coordination boundary between two systems.
+- **ACPS** — the per-decision class measuring constraint persistence under adversarial pressure.
+- **COS** — Constraint Object Specification: a constitutional-layer framework (design-time, established once).
+- **LRP** — Legitimacy Resolution: a constitutional-layer framework (design-time).
+- **GRC** — Governance Reference Conditions: a constitutional-layer framework (design-time). Distinct from the common "Governance, Risk, and Compliance."
+- **DRA** — Deployment Readiness Attestation: a periodic assessment (scheduled, not per decision).
+- **TDS** — a periodic MTCP assessment (scheduled, not per decision).
+- **BEC** — Behavioural Evidence Chain: hash-chained evidence operations; negligible per-decision CPU.
+- **Admissibility Gate** — a threshold lookup at the decision boundary, not an inference call.
+
+**Standards**
+
+- **XACML** — eXtensible Access Control Markup Language (OASIS): policy language for PERMIT / DENY access decisions.
+- **SHACL** — Shapes Constraint Language (W3C): validates data against constraint shapes.
+- **OWL** — Web Ontology Language (W3C).
+
+**Regulatory**
+
+- **EU MDR** — European Union Medical Device Regulation (Regulation 2017/745); Article 22 concerns obligations of the responsible person.
+- **NMI** — the Swedish national regulatory requirements cited here for per-decision defensibility in AI-assisted clinical decision support (see References).
+
+**Technical / general**
+
+- **CPU-bound** — cost is processor time. **Inference-bound** — cost is per-call model inference (tokens).
+- **LLM** — large language model.
+- **vCPU** — virtual CPU; the cloud pricing unit ($/vCPU-hour).
+- **TCO** — total cost of ownership.
+- **token** — the unit of LLM input/output that inference is billed on.
+- **T** — an LLM's sampling temperature (e.g., T=0.0 leans deterministic, T=0.8 more random).
+- **DOI** — Digital Object Identifier (a persistent citation identifier).
 
 ## 1. Why This Argument and Why Now
 
