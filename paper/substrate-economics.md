@@ -189,6 +189,8 @@ Third, sovereign and air-gapped deployments face an additional multiplier on the
 
 These three structural differences compound at scale. They are not addressable through pricing negotiations or engineering optimisation. They follow from the fundamental difference between probabilistic inference and deterministic computation.
 
+Fourth, the CPU benchmark data is independently reproducible from the open repository at github.com/Axius-SDC/substrate-economics. The inference-side cost estimates derive from protocol-based token consumption estimates validated against probe structure. The deterministic side costs derive from independently verifiable benchmarks. The evidentiary asymmetry strengthens the structural argument: one side is checkable from open source; the other is an estimate from a published protocol.
+
 ## 7. Implications for Procurement
 
 Three implications follow for regulated enterprise and sovereign procurement evaluators.

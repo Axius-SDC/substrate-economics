@@ -28,7 +28,7 @@ The substrate-side benchmark is built and run: fixtures (ten CordovaOS models, o
 
 ## Reproducibility and citation
 
-The benchmark harness, raw timing data, and a pinned environment manifest are published here so the result is independently checkable. On publication, a release is tagged and a versioned DOI is minted (Zenodo's GitHub integration mints a DOI per release). This repository is private during development and made public at publication.
+The benchmark harness, raw timing data, and a pinned environment manifest are published here so the result is independently checkable. On publication, a release is tagged and a versioned DOI is minted (Zenodo's GitHub integration mints a DOI per release). This repository is public.
 
 ## Licensing
 
